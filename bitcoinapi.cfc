@@ -7,18 +7,7 @@
     <cfreturn this />
   </cffunction>
 
-  <cffunction name="formatSatoshi" access="public" output="false" returntype="string">
-    <cfargument name="satoshi" type="any" required="true" />
-    <cfargument name="addLabel" type="boolean" required="false" default="true" />
-    <cfscript>
-      arguments.satoshi = (not len(arguments.satoshi) or not isNumeric(arguments.satoshi)) ? 0 : arguments.satoshi;
-      arguments.satoshi = numberFormat(arguments.satoshi / 100000000, ".99999999");
-
-      if (arguments.addLabel)
-        arguments.satoshi &= " BTC";
-    </cfscript>
-    <cfreturn arguments.satoshi />
-  </cffunction>
+  <!--- address validation --->
 
   <cffunction name="validateBitcoinAddress" access="public" output="false" returntype="boolean">
     <cfargument name="address" type="string" required="true" />
@@ -35,6 +24,38 @@
         return false;
     </cfscript>
     <cfreturn loc.address.isValidAddress(loc.network) />
+  </cffunction>
+
+  <!--- formatting helpers --->
+
+  <cffunction name="formatSatoshi" access="public" output="false" returntype="string">
+    <cfargument name="satoshi" type="any" required="true" />
+    <cfargument name="addLabel" type="boolean" required="false" default="true" />
+    <cfscript>
+      arguments.satoshi = (not len(arguments.satoshi) or not isNumeric(arguments.satoshi)) ? 0 : arguments.satoshi;
+      arguments.satoshi = numberFormat(arguments.satoshi / 100000000, ".99999999");
+
+      if (arguments.addLabel)
+        arguments.satoshi &= " BTC";
+    </cfscript>
+    <cfreturn arguments.satoshi />
+  </cffunction>
+
+  <cffunction name="formatMhs" access="public" output="false" returntype="string">
+    <cfargument name="mhs" type="numeric" required="true" />
+    <cfargument name="ehsFormat" type="string" required="false" default="Eh/s" />
+    <cfargument name="thsFormat" type="string" required="false" default="Th/s" />
+    <cfargument name="ghsFormat" type="string" required="false" default="Gh/s" />
+    <cfargument name="mhsFormat" type="string" required="false" default="Mh/s" />
+    <cfscript>
+      if (arguments.mhs / 1000000000 gte 1)
+        return decimalFormat(arguments.mhs / 1000000000) & arguments.ehsFormat;
+      else if (arguments.mhs / 1000000 gte 1)
+        return decimalFormat(arguments.mhs / 1000000) & arguments.thsFormat;
+      else if (arguments.mhs / 1000 gte 1)
+        return decimalFormat(arguments.mhs / 1000) & arguments.ghsFormat;
+    </cfscript>
+    <cfreturn decimalFormat(arguments.mhs) & arguments.mhsFormat />
   </cffunction>
 
   <cffunction name="_createBitcoinApiJavaLoader" access="public" output="false" returntype="any">
