@@ -43,19 +43,25 @@
 
   <cffunction name="formatMhs" access="public" output="false" returntype="string">
     <cfargument name="mhs" type="numeric" required="true" />
-    <cfargument name="ehsFormat" type="string" required="false" default="Eh/s" />
+    <cfargument name="phsFormat" type="string" required="false" default="Ph/s" />
     <cfargument name="thsFormat" type="string" required="false" default="Th/s" />
     <cfargument name="ghsFormat" type="string" required="false" default="Gh/s" />
     <cfargument name="mhsFormat" type="string" required="false" default="Mh/s" />
     <cfscript>
       if (arguments.mhs / 1000000000 gte 1)
-        return decimalFormat(arguments.mhs / 1000000000) & arguments.ehsFormat;
+        return decimalFormat(arguments.mhs / 1000000000) & arguments.phsFormat;
       else if (arguments.mhs / 1000000 gte 1)
         return decimalFormat(arguments.mhs / 1000000) & arguments.thsFormat;
       else if (arguments.mhs / 1000 gte 1)
         return decimalFormat(arguments.mhs / 1000) & arguments.ghsFormat;
     </cfscript>
     <cfreturn decimalFormat(arguments.mhs) & arguments.mhsFormat />
+  </cffunction>
+
+  <cffunction name="calculateHashRate" access="public" output="false" returntype="numeric">
+    <cfargument name="shares" type="numeric" required="true" />
+    <cfargument name="seconds" type="numeric" required="true" />
+    <cfreturn int(int(arguments.shares) * 2^32) / (int(arguments.seconds) * 1000 * 1000) />
   </cffunction>
 
   <cffunction name="_createBitcoinApiJavaLoader" access="public" output="false" returntype="any">
