@@ -64,6 +64,17 @@
     <cfreturn int(int(arguments.shares) * 2^32) / (int(arguments.seconds) * 1000 * 1000) />
   </cffunction>
 
+  <cffunction name="blockRewardAtHeight" access="public" output="false" returntype="numeric">
+    <cfargument name="height" type="numeric" required="true" />
+    <cfscript>
+      var loc = { blockReward = 50, loops = int(height / 210000) };
+
+      for (loc.i = 1; loc.i lte loc.loops; loc.i++)
+        loc.blockReward = loc.blockReward / 2;
+    </cfscript>
+    <cfreturn loc.blockReward />
+  </cffunction>
+
   <cffunction name="_createBitcoinApiJavaLoader" access="public" output="false" returntype="any">
     <cfscript>
       var loc = {};
